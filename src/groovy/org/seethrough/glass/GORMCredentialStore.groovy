@@ -15,11 +15,12 @@ class GORMCredentialStore implements CredentialStore {
 
     @Override
     boolean load(String userId, Credential credential) {
-        User user = User.get(userId)
+        String className = grailsApplication.mergedConfig.grails.plugin.glass.userDomainClassName
+        user = grailsApplication.getClassForName(className).get(userId)
 
         if (!user) return false
 
-        UserCredential storedCredential = user.credential
+        def storedCredential = user.credential
 
         if (!storedCredential) return false
 
@@ -32,11 +33,13 @@ class GORMCredentialStore implements CredentialStore {
 
     @Override
     void store(String userId, Credential credential) {
-        User user = User.get(userId)
+        String className = grailsApplication.mergedConfig.grails.plugin.glass.userDomainClassName
+        user = grailsApplication.getClassForName(className).get(userId)
 
         if (!user) throw new NullPointerException("No such user with ID $userId")
 
-        def cred = UserCredential.findOrCreateWhere(user: user)
+        className = grailsApplication.mergedConfig.grails.plugin.glass.userCredentialDomainClassName
+        def cred = grailsApplication.getClassForName(className).findOrCreateWhere(user: user)
 		cred.with {
                 accessToken = credential.accessToken
                 refreshToken = credential.refreshToken
@@ -49,7 +52,8 @@ class GORMCredentialStore implements CredentialStore {
 
     @Override
     void delete(String userId, Credential credential) {
-        User user = User.get(userId)
+        String className = grailsApplication.mergedConfig.grails.plugin.glass.userDomainClassName
+        user = grailsApplication.getClassForName(className).get(userId)
 
         if (user) {
             user.credential.delete()

@@ -87,7 +87,7 @@ class AuthorisationService implements InitializingBean {
         return newAuthorizationCodeFlow().loadCredential(userId)
     }
 
-    Credential getCredential(User user) {
+    Credential getCredential(user) {
         return getCredential(user.id)
     }
 
@@ -102,7 +102,7 @@ class AuthorisationService implements InitializingBean {
         return url.build()
     }
 
-    User oauthUser(accessCode) {
+    def oauthUser(accessCode) {
         def link = grailsLinkGenerator.link(action: 'callback', absolute: true)
         AuthorizationCodeFlow flow = newAuthorizationCodeFlow()
         TokenResponse tokenResponse =
@@ -119,10 +119,11 @@ class AuthorisationService implements InitializingBean {
 		//User user = User.findOrSaveWhere(id: userId)
 
 		// temp workaround until bug above is fixed
-		User user = User.get(userId)
+		String className = grailsApplication.mergedConfig.grails.plugin.glass.userDomainClassName
+		user = grailsApplication.getClassForName(className).get(userId)
 
 		if (!user) {
-			user = new User()
+			user = grailsApplication.getClassForName(className).newInstance() 
 			user.id = userId
 			user = user.merge(failOnError:true)
 		}
@@ -139,7 +140,7 @@ class AuthorisationService implements InitializingBean {
 		return user.merge(failOnError:true)
     }
 
-	void bootstrapNewUser(User user) throws IOException {
+	void bootstrapNewUser(user) throws IOException {
 		// Create contact
 		Contact appContact = new Contact()
 		appContact.id = mirrorService.APP_NAME
@@ -190,7 +191,7 @@ class AuthorisationService implements InitializingBean {
 		grailsLinkGenerator.link(controller: 'notify', absolute: true)
 	}
 	
-	boolean isUserSubscribed(User user) {
+	boolean isUserSubscribed(user) {
 		def expectedCallbackUrl = createCallbackUrl()
 		
 		def subscriptions = mirrorService.listSubscriptions(user)

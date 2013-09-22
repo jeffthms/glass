@@ -64,7 +64,7 @@ class MirrorService implements InitializingBean {
 		return result
 	}
 	
-	private Mirror getMirror(User user) {
+	private Mirror getMirror(user) {
 		Credential credential = authorisationService.getCredential(user.id)
 		createTestBuilder(credential).build()
 	 }
@@ -90,22 +90,22 @@ class MirrorService implements InitializingBean {
 		return builder
 	}
 
-    Contact insertContact(User user, Contact contact) throws IOException {
+    Contact insertContact(user, Contact contact) throws IOException {
         Mirror.Contacts contacts = getMirror(user).contacts()
 		execute(contacts.insert(contact))
     }
 
-    void deleteContact(User user, String contactId) throws IOException {
+    void deleteContact(user, String contactId) throws IOException {
         Mirror.Contacts contacts = getMirror(user).contacts()
         execute(contacts.delete(contactId))
     }
 
-    ContactsListResponse listContacts(User user) throws IOException {
+    ContactsListResponse listContacts(user) throws IOException {
         Mirror.Contacts contacts = getMirror(user).contacts()
         return execute(contacts.list())
     }
 
-    Contact getContact(User user, String id) throws IOException {
+    Contact getContact(user, String id) throws IOException {
         try {
             Mirror.Contacts contacts = getMirror(user).contacts()
             return execute(contacts.get(id))
@@ -116,7 +116,7 @@ class MirrorService implements InitializingBean {
     }
 
 
-    TimelineListResponse listItems(User user, long count)
+    TimelineListResponse listItems(user, long count)
     throws IOException {
         Mirror.Timeline timelineItems = getMirror(user).timeline()
         Mirror.Timeline.List list = timelineItems.list()
@@ -128,7 +128,7 @@ class MirrorService implements InitializingBean {
     /**
      * Subscribes to notifications on the user's timeline.
      */
-    Subscription insertSubscription(User user, String callbackUrlStr, String collectionStr) throws IOException {
+    Subscription insertSubscription(user, String callbackUrlStr, String collectionStr) throws IOException {
         log.info("Attempting to subscribe verify_token " + user.id + " with callback " + callbackUrlStr)
 
         // Rewrite "appspot.com" to "Appspot.com" as a workaround for
@@ -150,11 +150,11 @@ class MirrorService implements InitializingBean {
     /**
      * Subscribes to notifications on the user's timeline.
      */
-    void deleteSubscription(User user, String id) throws IOException {
+    void deleteSubscription(user, String id) throws IOException {
         execute(getMirror(user).subscriptions().delete(id))
     }
 
-    List<Subscription> listSubscriptions(User user) throws IOException {
+    List<Subscription> listSubscriptions(user) throws IOException {
         Mirror.Subscriptions subscriptions = getMirror(user).subscriptions()
         return execute(subscriptions.list()).items
     }
@@ -165,7 +165,7 @@ class MirrorService implements InitializingBean {
      * @param user the user object
      * @param item the item to insert
      */
-    TimelineItem insertTimelineItem(User user, TimelineItem item) throws IOException {
+    TimelineItem insertTimelineItem(user, TimelineItem item) throws IOException {
         return execute(getMirror(user).timeline().insert(item))
     }
 
@@ -178,7 +178,7 @@ class MirrorService implements InitializingBean {
      *        none)
      * @param attachmentData data for the attachment (or null if none)
      */
-    void insertTimelineItem(User user, TimelineItem item,
+    void insertTimelineItem(user, TimelineItem item,
                                           String attachmentContentType, byte[] attachmentData) throws IOException {
         Mirror.Timeline timeline = getMirror(user).timeline()
         execute(timeline.insert(item, new ByteArrayContent(attachmentContentType, attachmentData)))
@@ -195,24 +195,24 @@ class MirrorService implements InitializingBean {
      * @param attachmentInputStream input stream for the attachment (or null if
      *        none)
      */
-    void insertTimelineItem(User user, TimelineItem item,
-                                          String attachmentContentType, InputStream attachmentInputStream) throws IOException {
+    void insertTimelineItem(user, TimelineItem item,
+                              String attachmentContentType, InputStream attachmentInputStream) throws IOException {
         insertTimelineItem(user, item, attachmentContentType,
                 ByteStreams.toByteArray(attachmentInputStream))
     }
 
-	TimelineItem getTimelineItem(User user, String timelineItemId) {
+	TimelineItem getTimelineItem(user, String timelineItemId) {
 		Mirror mirror = getMirror(user)
         TimelineItem item = execute(mirror.timeline().get(timelineItemId))
 		return item
 	}
 	
-	String getTimelineText(User user, String timelineItemId) {
+	String getTimelineText(user, String timelineItemId) {
 		TimelineItem item = getTimelineItem(user, timelineItemId)
 		return item.text
 	}
 
-    InputStream getAttachmentInputStream(User user, String timelineItemId,
+    InputStream getAttachmentInputStream(user, String timelineItemId,
                                                        String attachmentId) throws IOException {
         Mirror mirror = getMirror(user)
         Mirror.Timeline.Attachments attachments = mirror.timeline().attachments()
@@ -223,14 +223,14 @@ class MirrorService implements InitializingBean {
         return resp.getContent()
     }
 
-    String getAttachmentContentType(User user, String timelineItemId,
+    String getAttachmentContentType(user, String timelineItemId,
                                                   String attachmentId) throws IOException {
         Mirror.Timeline.Attachments attachments = getMirror(user).timeline().attachments()
         Attachment attachmentMetadata = attachments.get(timelineItemId, attachmentId).execute()
         return attachmentMetadata.getContentType()
     }
 
-	List<String> getAttachmentIds(User user, String timelineItemId) {
+	List<String> getAttachmentIds(user, String timelineItemId) {
 		TimelineItem item = execute(getMirror(user).timeline().get(timelineItemId))
 		return item.attachments*.id
 	}

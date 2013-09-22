@@ -1,0 +1,17 @@
+package ${packageName}
+
+class ${userClassName} {
+	String id
+	String username
+
+	static hasOne = [credential: ${userCredentialClassName}]
+
+	static constraints = {
+		username unique: true, nullable: true
+		credential nullable: true
+	}
+
+	static mapping = {
+		id generator: 'assigned', name: 'id', type: 'string'
+	}
+}

@@ -23,7 +23,7 @@ class NotifyService {
 		}
 	}
 	
-	private InputStream retrieveAttachment(User user, String timelineItemId, String attachmentId) {
+	private InputStream retrieveAttachment(user, String timelineItemId, String attachmentId) {
 		return mirrorService.getAttachmentInputStream(user, timelineItemId, attachmentId)
 	}
 	

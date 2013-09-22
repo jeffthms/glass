@@ -14,7 +14,8 @@ class NotifyController {
 		response.flushBuffer()
 		
 		def userId = messageJson.userToken
-		def user = User.get(userId)
+		String className = grailsApplication.mergedConfig.grails.plugin.glass.userDomainClassName
+		def user = grailsApplication.getClassForName(className).get(userId)
 		
 		if (user) {		
 			notify(user, messageJson)
