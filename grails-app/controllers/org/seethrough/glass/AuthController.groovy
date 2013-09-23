@@ -24,6 +24,10 @@ class AuthController {
 	}
 
 	def callback() {
+		if (!params.code) {
+			render "Missing OAuth code"
+			return
+		}
 		def user = authorisationService.oauthUser(params.code)
 		session.user = user
 
