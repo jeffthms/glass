@@ -68,7 +68,7 @@ private void updateConfig() {
 			it.writeLine "grails.plugin.glass.home.controller = 'controller'"
 			it.writeLine "grails.plugin.glass.home.action = 'action to direct to after user has been authorised by Google OAuth2 (optional. Will default to a simple connected message)'"
 			it.writeLine "grails.plugin.glass.oauth.clientid = 'client ID provided by Google'"
-			it.writeLine "grails.plugin.glass.oauth.cliensecret = 'client secret provided by Google'"
+			it.writeLine "grails.plugin.glass.oauth.clientsecret = 'client secret provided by Google'"
 		}
 	}
 }
